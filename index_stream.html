@@ -1,0 +1,97 @@
+<!doctype html> 
+<html lang="en"> 
+    <head>
+        <meta charset="utf-8">
+        <title>
+            Quote Stream
+        </title>
+
+      <!-- Latest compiled and minified CSS -->
+      <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+
+      <!-- Optional theme -->
+      <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
+
+      <!-- Latest compiled and minified JavaScript -->
+      <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+
+      <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.18/jquery-ui.js"></script>
+      <script type="text/javascript" src="http://localhost:4000/socket.io/socket.io.js"></script>
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+
+    	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.js"></script>
+
+    </head>
+
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+
+            var ticker = prompt('Choose a symbol, for example "YHOO, AAPL, MSFT"', "YHOO");
+            //client
+  
+            var socket = io.connect("http://localhost:4000");
+            
+            socket.emit('ticker', ticker);
+
+            //on recupere l'emit du serveur 
+            socket.on('send_quote_client', function(data) {
+
+            //affichage en bloc json 
+            var data = $("<pre>" + data + "</pre><hr />");
+            
+            console.log(data);
+                  
+                  //apend() -> pour reload la data et la rajouter en dessous de la precedente
+                  //on defini un id #quotes pour le rajouter dans les balises html 
+                  $("#quotes").append(data);
+                  
+                  //annimation
+                  // $("html, body").animate({ scrollTop: $(document).height() }, 100);
+                  $(data).show("slide", { direction: "up" }, 250);
+                  $(data).effect("highlight", {}, 1500); 
+
+              });
+
+        // $(window).on('hashchange', function() {
+        //       var ticker = location.hash.substr(1);
+        //       socket.emit('ticker', ticker);
+        //     });
+        });
+
+    </script>
+
+
+    <body>
+
+
+        <div class="container-fluid">
+          <div class="row">
+            <!-- container right -->
+              <div class="col-md-5">
+                <h1>Data vizualisation - Stream</h1>
+                  <div class="data_vizualisation">
+                    <div class=""id="quotes"></div>
+                  </div>
+              </div>
+            <!-- container left -->
+            <div class="col-md-5">
+                <h1>Real time chart (not working)</h1>
+                <iframe width="600" height="600" frameborder="0" scrolling="no" src="https://plot.ly/~jadedagherparis/0.embed"></iframe>
+            </div>
+          </div>
+        </div>
+
+
+
+    </body>
+</html>
+
+<style>
+
+  .data_vizualisation{
+      overflow: scroll;
+      height: 725px;
+    }
+
+</style>
